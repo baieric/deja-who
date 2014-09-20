@@ -1,0 +1,13 @@
+# Xcode
+*/build/*
+*.pbxuser
+*.xcworkspace
+*xcuserdata
+*.moved-aside
+*.DS_Store
+
+# Unity
+*.csproj
+*.sln
+IntegratingFacebookTutorial-Unity/Library
+IntegratingFacebookTutorial-Unity/Temp
