@@ -144,9 +144,13 @@ public class LoginActivity extends Activity {
                                 userProfile.put("facebookId", user.getId());
                                 userProfile.put("firstName", user.getFirstName());
                                 userProfile.put("lastName", user.getLastName());
-                                if (user.getLocation().getProperty("name") != null) {
-                                    userProfile.put("location", (String) user
-                                            .getLocation().getProperty("name"));
+                                if (user.getLocation() != null) {
+                                    if (user.getLocation().getProperty("name") != null) {
+                                        userProfile.put("location", (String) user
+                                                .getLocation().getProperty("name"));
+                                    } else {
+                                        userProfile.put("location", "");
+                                    }
                                 }else{
                                     userProfile.put("location", "");
                                 }

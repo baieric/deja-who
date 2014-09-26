@@ -4,9 +4,12 @@ package com.parse.integratingfacebooktutorial;
  * Created by Eric on 2014-09-25.
  */
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +19,12 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.widget.ProfilePictureView;
 import com.parse.ParseImageView;
+import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class EncounterAdapter extends ArrayAdapter<Encounter> {
     private boolean isFavoritesView = false;
@@ -39,6 +47,8 @@ public class EncounterAdapter extends ArrayAdapter<Encounter> {
             // Cache view components into the view holder
             holder = new ViewHolder();
             holder.nameView = (TextView) view.findViewById(R.id.name_view);
+            //holder.dateView = (TextView) view.findViewById(R.id.date_view);
+            holder.userProfilePictureView = (ProfilePictureView) view.findViewById(R.id.userProfilePicture);
             /*holder.titleView = (TextView) view.findViewById(R.id.title);
             holder.speakerName = (TextView) view
                     .findViewById(R.id.speaker_name);
@@ -61,8 +71,35 @@ public class EncounterAdapter extends ArrayAdapter<Encounter> {
             talkLayout.setBackgroundColor(displayColor);
         }*/
 
+        ParseUser user = encounter.getUser();
+        //SimpleDateFormat df = new SimpleDateFormat("MMMM dd, yyyy h:mm a", Locale.US);
         TextView nameView = holder.nameView;
-        nameView.setText(encounter.getUser().getUsername());
+        //TextView dateView = holder.dateView;
+        //dateView.setText(df.format(encounter.getDate("createdAt")));
+        ProfilePictureView pictureView = holder.userProfilePictureView;
+
+        if (user.get("profile") != null) {
+            JSONObject userProfile = user.getJSONObject("profile");
+            try {
+                if (userProfile.getString("facebookId") != null) {
+                    String facebookId = userProfile.get("facebookId")
+                            .toString();
+                    pictureView.setProfileId(facebookId);
+                } else {
+                    // Show the default, blank user profile picture
+                    pictureView.setProfileId(null);
+                }
+                if (userProfile.getString("firstName") != null) {
+                    nameView.setText(userProfile.getString("firstName"));
+                } else {
+                    nameView.setText("Anonymous");
+                }
+            } catch (JSONException e) {
+                Log.d(IntegratingFacebookTutorialApplication.TAG,
+                        "Error parsing saved user data.");
+            }
+
+        }
 
         /*TextView titleView = holder.titleView;
         TextView speakerName = holder.speakerName;
@@ -133,6 +170,8 @@ public class EncounterAdapter extends ArrayAdapter<Encounter> {
     private static class ViewHolder {
         LinearLayout talkLayout;
         TextView nameView;
+        TextView dateView;
+        ProfilePictureView userProfilePictureView;
         /*TextView titleView;
         TextView speakerName;
         ParseImageView photo;
