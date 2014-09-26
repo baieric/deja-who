@@ -170,7 +170,7 @@ public class Encounter extends ParseObject {
         if ( ((ParseUser) (get("user1"))).getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
             return (ParseUser) get("user2");
         }else{
-            return (ParseUser) get("user2");
+            return (ParseUser) get("user1");
         }
     }
 

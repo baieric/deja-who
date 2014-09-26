@@ -25,6 +25,9 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -104,6 +107,11 @@ public class LoginActivity extends Activity {
 					Log.d(IntegratingFacebookTutorialApplication.TAG,
 							"Uh oh. The user cancelled the Facebook login.");
 				} else if (user.isNew()) {
+                    // Fetch Facebook user info if the session is active
+                    Session session = ParseFacebookUtils.getSession();
+                    if (session != null && session.isOpened()) {
+                        makeMeRequest();
+                    }
 					Log.d(IntegratingFacebookTutorialApplication.TAG,
 							"User signed up and logged in through Facebook!");
 					showEncounterListActivity();
@@ -120,5 +128,74 @@ public class LoginActivity extends Activity {
     private void showEncounterListActivity() {
         Intent intent = new Intent(this, EncounterListActivity.class);
         startActivity(intent);
+    }
+
+    private void makeMeRequest() {
+        Request request = Request.newMeRequest(ParseFacebookUtils.getSession(),
+                new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        if (user != null) {
+                            // Create a JSON object to hold the profile info
+                            JSONObject userProfile = new JSONObject();
+                            try {
+                                // Populate the JSON object
+
+                                userProfile.put("facebookId", user.getId());
+                                userProfile.put("firstName", user.getFirstName());
+                                userProfile.put("lastName", user.getLastName());
+                                if (user.getLocation().getProperty("name") != null) {
+                                    userProfile.put("location", (String) user
+                                            .getLocation().getProperty("name"));
+                                }else{
+                                    userProfile.put("location", "");
+                                }
+                                if (user.getProperty("gender") != null) {
+                                    userProfile.put("gender",
+                                            (String) user.getProperty("gender"));
+                                }else{
+                                    userProfile.put("gender", "");
+                                }
+                                if (user.getBirthday() != null) {
+                                    userProfile.put("birthday",
+                                            user.getBirthday());
+                                }else{
+                                    userProfile.put("birthday", "");
+                                }
+                                if (user.getProperty("relationship_status") != null) {
+                                    userProfile
+                                            .put("relationship_status",
+                                                    (String) user
+                                                            .getProperty("relationship_status"));
+                                }else{
+                                    userProfile.put("relationship_status", "");
+                                }
+
+                                // Save the user profile info in a user property
+                                ParseUser currentUser = ParseUser.getCurrentUser();
+                                currentUser.put("profile", userProfile);
+                                currentUser.saveInBackground();
+
+                            } catch (JSONException e) {
+                                Log.d(IntegratingFacebookTutorialApplication.TAG,
+                                        "Error parsing returned user data.");
+                            }
+
+                        } else if (response.getError() != null) {
+                            if ((response.getError().getCategory() == FacebookRequestError.Category.AUTHENTICATION_RETRY)
+                                    || (response.getError().getCategory() == FacebookRequestError.Category.AUTHENTICATION_REOPEN_SESSION)) {
+                                Log.d(IntegratingFacebookTutorialApplication.TAG,
+                                        "The facebook session was invalidated.");
+                            } else {
+                                Log.d(IntegratingFacebookTutorialApplication.TAG,
+                                        "Some other error: "
+                                                + response.getError()
+                                                .getErrorMessage());
+                            }
+                        }
+                    }
+                });
+        request.executeAsync();
+
     }
 }
