@@ -47,7 +47,7 @@ public class EncounterAdapter extends ArrayAdapter<Encounter> {
             // Cache view components into the view holder
             holder = new ViewHolder();
             holder.nameView = (TextView) view.findViewById(R.id.name_view);
-            //holder.dateView = (TextView) view.findViewById(R.id.date_view);
+            holder.dateView = (TextView) view.findViewById(R.id.date_view);
             holder.userProfilePictureView = (ProfilePictureView) view.findViewById(R.id.userProfilePicture);
             /*holder.titleView = (TextView) view.findViewById(R.id.title);
             holder.speakerName = (TextView) view
@@ -72,10 +72,10 @@ public class EncounterAdapter extends ArrayAdapter<Encounter> {
         }*/
 
         ParseUser user = encounter.getUser();
-        //SimpleDateFormat df = new SimpleDateFormat("MMMM dd, yyyy h:mm a", Locale.US);
+        SimpleDateFormat df = new SimpleDateFormat("MMMM dd, yyyy h:mm a", Locale.US);
         TextView nameView = holder.nameView;
-        //TextView dateView = holder.dateView;
-        //dateView.setText(df.format(encounter.getDate("createdAt")));
+        TextView dateView = holder.dateView;
+        dateView.setText(df.format(encounter.getCreatedAt()));
         ProfilePictureView pictureView = holder.userProfilePictureView;
 
         if (user.get("profile") != null) {

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:gravity="center_vertical">
+    android:layout_height="match_parent">
     <com.facebook.widget.ProfilePictureView
         android:id="@+id/userProfilePicture"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
         facebook:preset_size="small" />
     <TextView
         android:id="@+id/name_view"
@@ -17,5 +16,18 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:textColor="@android:color/black"
-        android:textSize="20sp" />
-</LinearLayout>
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:textSize="24sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/date_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/black"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:layout_below="@+id/name_view"
+        android:textSize="12sp" />
+</RelativeLayout>
