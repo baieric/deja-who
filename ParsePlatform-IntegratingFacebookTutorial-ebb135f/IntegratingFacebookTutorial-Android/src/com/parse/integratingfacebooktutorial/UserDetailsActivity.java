@@ -1,49 +1,97 @@
 package com.parse.integratingfacebooktutorial;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.ProfilePictureView;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
+
 public class UserDetailsActivity extends Activity {
 
 	private ProfilePictureView userProfilePictureView;
-	private TextView userNameView;
-	private TextView userLocationView;
+    private TextView userLocationView;
 	private TextView userGenderView;
-	private TextView userDateOfBirthView;
 	private TextView userRelationshipView;
 	private Button logoutButton;
+    private ListView userLikes;
+    public static ParseUser friend;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.userdetails);
+        if(getIntent().getStringExtra("parent").equals("EncounterListActivity")) {
+            friend = EncounterListActivity.selectedUser;
+        }
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
-		userNameView = (TextView) findViewById(R.id.userName);
 		userLocationView = (TextView) findViewById(R.id.userLocation);
 		userGenderView = (TextView) findViewById(R.id.userGender);
-		userDateOfBirthView = (TextView) findViewById(R.id.userDateOfBirth);
 		userRelationshipView = (TextView) findViewById(R.id.userRelationship);
+        userLikes = (ListView) findViewById(R.id.lsvLikes);
 
-		logoutButton = (Button) findViewById(R.id.logoutButton);
+        //Query Parse for the
+        //System.out.printf("1");
+        // Getting mutual likes
+        Session newSession = Session.getActiveSession();
+//        String facebookID = "/10203769898401857"; //Parameter should be passed from Home
+        String facebookID = "/me"; //Parameter should be passed from Home
+        Bundle params = new Bundle();
+        params.putString("fields", "context.fields(mutual_likes)");
+
+        /* make the API call */
+        RequestAsyncTask requestAsyncTask = new Request(
+                newSession,
+                facebookID,
+                params,
+                HttpMethod.GET,
+                new Request.Callback() {
+                    public void onCompleted(Response response) {
+                        Log.i("222222", "2222");
+
+                        GraphObject objMutualLikes = response.getGraphObject();
+
+
+                        Map<String, Object> likes = objMutualLikes.asMap();
+                        for (String like : likes.keySet()) {
+                            Log.i("async", like);
+                            Log.i("second:   ", likes.get(like).toString());
+                        }
+                        Log.i("length: " + likes.toString(),"length: " + likes.toString());
+//                        JSONArray[] arrMutualLikes = objMutualLikes.getJSONArray("data");
+//                        System.out.printf("length: %d", arrMutualLikes.length);
+//                        for (int i = 0; i <= arrMutualLikes.length; i++) {
+//                            String likeID = arrMutualLikes[i].getString("id");
+//                            System.out.printf("id: %s", arrMutualLikes[i].getString("id"));
+//
+//                        }
+
+                    }
+                }
+        ).executeAsync();
+
+
+        logoutButton = (Button) findViewById(R.id.logoutButton);
 		logoutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -62,8 +110,8 @@ public class UserDetailsActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		if (currentUser != null) {
+		ParseUser user = friend;
+		if (user != null) {
 			// Check if the user is currently logged
 			// and show any cached content
 			updateViewsWithProfileInfo();
@@ -84,12 +132,14 @@ public class UserDetailsActivity extends Activity {
 							JSONObject userProfile = new JSONObject();
 							try {
 								// Populate the JSON object
+
 								userProfile.put("facebookId", user.getId());
-								userProfile.put("name", user.getName());
-								if (user.getLocation().getProperty("name") != null) {
-									userProfile.put("location", (String) user
-											.getLocation().getProperty("name"));
-								}
+								userProfile.put("firstName", user.getFirstName());
+                                userProfile.put("lastName", user.getLastName());
+                                if (user.getLocation().getProperty("name") != null) {
+                                    userProfile.put("location", (String) user
+                                            .getLocation().getProperty("name"));
+                                }
 								if (user.getProperty("gender") != null) {
 									userProfile.put("gender",
 											(String) user.getProperty("gender"));
@@ -106,8 +156,7 @@ public class UserDetailsActivity extends Activity {
 								}
 
 								// Save the user profile info in a user property
-								ParseUser currentUser = ParseUser
-										.getCurrentUser();
+								ParseUser currentUser = friend;
 								currentUser.put("profile", userProfile);
 								currentUser.saveInBackground();
 
@@ -138,7 +187,7 @@ public class UserDetailsActivity extends Activity {
 	}
 
 	private void updateViewsWithProfileInfo() {
-		ParseUser currentUser = ParseUser.getCurrentUser();
+		ParseUser currentUser = friend;
 		if (currentUser.get("profile") != null) {
 			JSONObject userProfile = currentUser.getJSONObject("profile");
 			try {
@@ -150,32 +199,26 @@ public class UserDetailsActivity extends Activity {
 					// Show the default, blank user profile picture
 					userProfilePictureView.setProfileId(null);
 				}
-				if (userProfile.getString("name") != null) {
-					userNameView.setText(userProfile.getString("name"));
-				} else {
-					userNameView.setText("");
-				}
-				if (userProfile.getString("location") != null) {
-					userLocationView.setText(userProfile.getString("location"));
-				} else {
-					userLocationView.setText("");
-				}
+                if (userProfile.getString("location") != null) {
+                    userLocationView.setText(userProfile.getString("location"));
+                } else {
+                    userLocationView.setText("");
+                }
 				if (userProfile.getString("gender") != null) {
 					userGenderView.setText(userProfile.getString("gender"));
 				} else {
 					userGenderView.setText("");
 				}
-				if (userProfile.getString("birthday") != null) {
-					userDateOfBirthView.setText(userProfile
-							.getString("birthday"));
-				} else {
-					userDateOfBirthView.setText("");
-				}
+                if (userProfile.getString("firstName") != null) {
+                    getActionBar().setTitle(userProfile.getString("firstName"));
+                } else {
+                    getActionBar().setTitle("");
+                }
 				if (userProfile.getString("relationship_status") != null) {
 					userRelationshipView.setText(userProfile
 							.getString("relationship_status"));
 				} else {
-					userRelationshipView.setText("");
+					userRelationshipView.setText("Not specified");
 				}
 			} catch (JSONException e) {
 				Log.d(IntegratingFacebookTutorialApplication.TAG,

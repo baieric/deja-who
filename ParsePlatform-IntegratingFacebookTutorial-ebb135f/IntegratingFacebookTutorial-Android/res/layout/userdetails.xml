@@ -3,7 +3,8 @@
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:gravity="center">
     
     <LinearLayout
             android:layout_width="match_parent"
@@ -14,18 +15,10 @@
             <com.facebook.widget.ProfilePictureView
                 android:id="@+id/userProfilePicture"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal"
-                facebook:preset_size="small" />
-            <TextView
-                android:id="@+id/userName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center"
-                android:textColor="#333"
-                android:textSize="18sp" />
+                facebook:preset_size="large" />
     </LinearLayout>
         
     <TableLayout
@@ -98,33 +91,6 @@
                 android:layout_gravity="right"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:text="@string/date_of_birth" />
-            <TextView
-                android:id="@+id/userDateOfBirth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="left"
-                android:textSize="16sp" />
-        </TableRow>
-        <TableRow>
-            <View
-                android:layout_span="2"
-                android:layout_width="wrap_content"
-                android:layout_height="0.5dp"
-                android:layout_weight="1"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="#999" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="right"
-                android:textSize="16sp"
-                android:textStyle="bold"
                 android:text="@string/relationship" />
             <TextView
                 android:id="@+id/userRelationship"
@@ -135,7 +101,12 @@
                 android:textSize="16sp" />
         </TableRow>
     </TableLayout>
-    
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lsvLikes" />
+
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="wrap_content"

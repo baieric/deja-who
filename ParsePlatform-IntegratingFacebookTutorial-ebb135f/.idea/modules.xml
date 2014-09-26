@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/IntegratingFacebookTutorial-Android/IntegratingFacebookTutorial-Android.iml" filepath="$PROJECT_DIR$/IntegratingFacebookTutorial-Android/IntegratingFacebookTutorial-Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/facebook/facebook.iml" filepath="$PROJECT_DIR$/facebook/facebook.iml" />
-      <module fileurl="file://$PROJECT_DIR$/IntegratingFacebookTutorial-Unity/Assets/Plugins/Android/facebook/facebook1.iml" filepath="$PROJECT_DIR$/IntegratingFacebookTutorial-Unity/Assets/Plugins/Android/facebook/facebook1.iml" />
     </modules>
   </component>
 </project>
