@@ -33,6 +33,8 @@ public class EncounterListActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent startIntent = new Intent(this, GPSTracker.class);
+	    startService(startIntent);
         setContentView(R.layout.encounterlist);
         ListView list = (ListView) findViewById(R.id.encounterList);
         /*ActionBar actionBar = getSupportActionBar();

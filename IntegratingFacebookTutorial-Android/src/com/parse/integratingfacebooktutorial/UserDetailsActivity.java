@@ -138,7 +138,7 @@ public class UserDetailsActivity extends Activity {
                 if (userProfile.getString("firstName") != null) {
                     getActionBar().setTitle(userProfile.getString("firstName"));
                 } else {
-                    getActionBar().setTitle("why");
+                    getActionBar().setTitle("error");
                 }
 				if (userProfile.getString("relationship_status") != null) {
 					userRelationshipView.setText(userProfile
