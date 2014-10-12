@@ -1,5 +1,9 @@
 package com.parse.integratingfacebooktutorial;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
@@ -16,20 +20,19 @@ import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
 
-    boolean isGPSEnabled = false;
-    boolean isNetworkEnabled = false;
-    boolean canGetLocation = false;
-    Location location;
-    double latitude, longitude;
+    private boolean isGPSEnabled = false;
+    private boolean isNetworkEnabled = false;
+    private Location location;
     private static final int MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final int MIN_TIME_BW_UPDATES = 1000*60*1; //1 minute
 
     LocationManager manager;
 
-    public GPSTracker() {
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId){
     	Log.d("GPSTracker", "initialized");
         getLocation();
-        onLocationChanged(location);
+        return START_STICKY;
     }
 
     public Location getLocation() {
@@ -41,7 +44,6 @@ public class GPSTracker extends Service implements LocationListener {
     		if(!isGPSEnabled && !isNetworkEnabled){
     			//no network provider is enabled
     		}else{
-    			this.canGetLocation = true;
     			if(isGPSEnabled){
     				Log.d("GPSTracker", "GPS enabled");
     				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
@@ -68,24 +70,6 @@ public class GPSTracker extends Service implements LocationListener {
     	}
     	return location;
     }
-    
-    public double getLatitude(){
-    	if(location != null){
-    		latitude = location.getLatitude();
-    	}
-    	return latitude;
-    }
-    
-    public double getLongitude(){
-    	if(location != null){
-    		longitude = location.getLongitude();
-    	}
-    	return longitude;
-    }
-    
-    public boolean canGetLocation(){
-    	return this.canGetLocation;
-    }
 
     @Override
     public void onLocationChanged(Location l) {
@@ -93,6 +77,8 @@ public class GPSTracker extends Service implements LocationListener {
 	    	ParseUser currentUser = ParseUser.getCurrentUser();
 	    	ParseGeoPoint geoPoint = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
 	    	currentUser.put("location", geoPoint);
+	    	Date date = new Date();
+	    	currentUser.put("locationUpdatedAt", date);
 	    	currentUser.saveInBackground(new SaveCallback() {
 	    	      @Override
 	    	      public void done(ParseException e) {

@@ -39,7 +39,9 @@
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/app_id"/>
-        <service android:name=".GPSTracker" android:label="@string/app_name" android:enabled="true"></service>
+        <service android:name=".GPSTracker"
+            android:label="@string/app_name" 
+            android:enabled="true"></service>
     </application>
 
 </manifest>
