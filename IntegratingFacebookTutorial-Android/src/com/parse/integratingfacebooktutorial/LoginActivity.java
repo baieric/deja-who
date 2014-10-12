@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+
 import com.facebook.FacebookRequestError;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -17,6 +18,7 @@ import com.facebook.model.GraphUser;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
@@ -91,6 +93,9 @@ public class LoginActivity extends Activity {
 							"Uh oh. The user cancelled the Facebook login.");
 				} else if (user.isNew()) {
                     // Fetch Facebook user info if the session is active
+					ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+					installation.put("user", ParseUser.getCurrentUser());
+					installation.saveInBackground();
                     Session session = ParseFacebookUtils.getSession();
                     if (session != null && session.isOpened()) {
                         makeMeRequest();

@@ -1,11 +1,15 @@
 package com.parse.integratingfacebooktutorial;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.List;
 
+import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -23,8 +27,11 @@ public class GPSTracker extends Service implements LocationListener {
     private boolean isGPSEnabled = false;
     private boolean isNetworkEnabled = false;
     private Location location;
+    private ParseGeoPoint geoPoint;
     private static final int MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final int MIN_TIME_BW_UPDATES = 1000*60*1; //1 minute
+    private static final double MAX_DISTANCE = 0.04; // kilometers (40 meters)
+    private static final int MINIMUM_MINUTES = 5; // minutes
 
     LocationManager manager;
 
@@ -75,7 +82,7 @@ public class GPSTracker extends Service implements LocationListener {
     public void onLocationChanged(Location l) {
     	if(l != null){
 	    	ParseUser currentUser = ParseUser.getCurrentUser();
-	    	ParseGeoPoint geoPoint = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
+	    	geoPoint = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
 	    	currentUser.put("location", geoPoint);
 	    	Date date = new Date();
 	    	currentUser.put("locationUpdatedAt", date);
@@ -83,9 +90,69 @@ public class GPSTracker extends Service implements LocationListener {
 	    	      @Override
 	    	      public void done(ParseException e) {
 	    	    	  Log.d("GPSTracker", "updated user");
+	    	    	  findNearbyUsers();
 	    	      }
 		    });
     	}
+    }
+    
+    public void findNearbyUsers(){
+    	ParseQuery<ParseUser> query = ParseUser.getQuery();
+    	query.whereWithinKilometers("location", geoPoint, MAX_DISTANCE);
+    	query.findInBackground(new FindCallback<ParseUser>(){
+			@Override
+			public void done(List<ParseUser> objects, ParseException e) {
+				Log.d("GPSTracker", "Found " + objects.size() + " users nearby");
+				for(ParseUser user : objects){
+					if(user.getObjectId() != ParseUser.getCurrentUser().getObjectId()){
+						processRelationship(user);
+					}
+				}
+			}
+    		
+    	});
+    }
+    
+    public void processRelationship(final ParseUser user){
+    	ParseQuery<Relationship> query1 = Relationship.createQuery();
+        query1.whereEqualTo("user1", user);
+        query1.whereEqualTo("user2", user);
+        ParseQuery<Relationship> query2 = Relationship.createQuery();
+        query2.whereEqualTo("user1", ParseUser.getCurrentUser());
+        query2.whereEqualTo("user2", ParseUser.getCurrentUser());
+        List<ParseQuery<Relationship>> queries = new ArrayList<ParseQuery<Relationship>>();
+        queries.add(query1);
+        queries.add(query2);
+        ParseQuery<Relationship> mainQuery = ParseQuery.or(queries);
+        mainQuery.include("user1");
+        mainQuery.include("user2");
+
+        mainQuery.getFirstInBackground(new GetCallback<Relationship>() {
+			@Override
+			public void done(Relationship object, ParseException e) {
+				if(object == null){
+					object = new Relationship();
+					object.put("user1", ParseUser.getCurrentUser());
+					object.put("user2", user);
+					object.put("numEncounters", 0);
+					object.put("user1Interested", 0);
+					object.put("user2Interested", 0);
+				}else{
+					Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.MINUTE, MINIMUM_MINUTES * -1);
+					Date date = cal.getTime();
+					if(object.getDate("lastMetAt").after(date)){
+						return;
+					}
+				}
+				object.increment("numEncounters");
+				Date date = new Date();
+				object.put("lastMetAt", date);
+				object.saveInBackground();
+				Log.d("GPSTracker", "updated relationship");
+				// create encounter
+			}
+        });
     }
 
 	@Override
