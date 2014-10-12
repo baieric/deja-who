@@ -61,14 +61,6 @@ public class LoginActivity extends Activity {
 				onLoginButtonClicked();
 			}
 		});
-
-		// Check if there is a currently logged in user
-		// and they are linked to a Facebook account.
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		if ((currentUser != null) && ParseFacebookUtils.isLinked(currentUser)) {
-			// Go to the user info activity
-			showEncounterListActivity();
-		}
 	}
 
 	@Override
@@ -117,7 +109,7 @@ public class LoginActivity extends Activity {
 	}
 
     private void showEncounterListActivity() {
-        Intent intent = new Intent(this, EncounterListActivity.class);
+        Intent intent = new Intent(this, RelationshipListActivity.class);
         startActivity(intent);
     }
 

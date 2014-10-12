@@ -13,7 +13,7 @@ public class IntegratingFacebookTutorialApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-        ParseObject.registerSubclass(Encounter.class);
+        ParseObject.registerSubclass(Relationship.class);
 
 		Parse.initialize(this, "dtobAK5ZzqbPxzglwZ2ecOzo9FzqiGWdU2JnFBR8",
 				"bPLRSYLUAVppB4Iqzva43FidTGYFMQUb94FrzBf4");

@@ -40,8 +40,8 @@ public class UserDetailsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userdetails);
-        if(getIntent().getStringExtra("parent").equals("EncounterListActivity")) {
-            friend = EncounterListActivity.selectedUser;
+        if(getIntent().getStringExtra("parent").equals("RelationshipListActivity")) {
+            friend = RelationshipListActivity.selectedUser;
         }
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
