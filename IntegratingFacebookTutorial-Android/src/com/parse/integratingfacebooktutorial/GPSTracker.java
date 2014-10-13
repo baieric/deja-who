@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
@@ -147,6 +148,12 @@ public class GPSTracker extends Service implements LocationListener {
 					object.put("numEncounters", 0);
 					object.put("user1Interested", 0);
 					object.put("user2Interested", 0);
+					ParseACL acl = new ParseACL();
+					acl.setReadAccess(ParseUser.getCurrentUser(), true);
+					acl.setWriteAccess(ParseUser.getCurrentUser(), true);
+					acl.setReadAccess(user, true);
+					acl.setWriteAccess(user, true);
+					object.setACL(acl);
 				}else{
 					Calendar cal = Calendar.getInstance();
 					cal.add(Calendar.HOUR, MINIMUM_HOURS * -1);
@@ -159,6 +166,7 @@ public class GPSTracker extends Service implements LocationListener {
 				object.put("unread", true);
 				Date date = new Date();
 				object.put("lastMetAt", date);
+				
 				object.saveInBackground();
 				Log.d("GPSTracker", "updated relationship");
 			}

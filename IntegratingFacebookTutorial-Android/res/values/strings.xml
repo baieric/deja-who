@@ -15,4 +15,10 @@
     <string name="relationship">Relationship</string>
     <string name="first_name">Name</string>
     
+    <string name="numEncounters"># of Passes</string>
+    <string name="lastpassed">Last Passed At</string>
+    <string name="interested">I want to chat!</string>
+    <string name="notinterested">Block</string>
+    
+    
 </resources>

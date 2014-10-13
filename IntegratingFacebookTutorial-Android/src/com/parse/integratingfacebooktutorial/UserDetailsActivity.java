@@ -32,6 +32,9 @@ public class UserDetailsActivity extends Activity {
     private TextView userLocationView;
 	private TextView userGenderView;
 	private TextView userRelationshipView;
+	private TextView numEncounterView;
+	private TextView lastPassedView;
+	private Button interestButton;
 	private Button logoutButton;
     private ListView userLikes;
     private static Relationship r;
@@ -44,17 +47,29 @@ public class UserDetailsActivity extends Activity {
         if(getIntent().getStringExtra("parent").equals("RelationshipListActivity")) {
         	r = RelationshipListActivity.selected;
             friend = r.getUser();
-            if(r.getBoolean("unread")){
-            	r.put("unread", false);
-            	r.saveInBackground();
+            ParseUser currentuser = ParseUser.getCurrentUser();
+            if(currentuser.hasSameId(r.getParseUser("user1"))){
+            	if(!r.getBoolean("user1Read")){
+            		r.put("user1Read", true);
+            		r.saveInBackground();
+            	}
+            }
+            if(friend.hasSameId(r.getParseUser("user1"))){
+            	if(!r.getBoolean("user2Read")){
+            		r.put("user2Read", true);
+            		r.saveInBackground();
+            	}
             }
         }
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);
 		userLocationView = (TextView) findViewById(R.id.userLocation);
 		userGenderView = (TextView) findViewById(R.id.userGender);
-		userRelationshipView = (TextView) findViewById(R.id.userRelationship);
+		//userRelationshipView = (TextView) findViewById(R.id.userRelationship);
         userLikes = (ListView) findViewById(R.id.lsvLikes);
+        numEncounterView = (TextView) findViewById(R.id.numEncounters);
+        lastPassedView = (TextView) findViewById(R.id.lastpassed);
+        
 
         //Query Parse for the
         //System.out.printf("1");
@@ -95,7 +110,9 @@ public class UserDetailsActivity extends Activity {
                     }
                 }
         ).executeAsync();
-
+        
+        interestButton = (Button) findViewById(R.id.interestbutton);
+        
 
         logoutButton = (Button) findViewById(R.id.logoutButton);
 		logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -110,17 +127,7 @@ public class UserDetailsActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		ParseUser user = friend;
-		if (user != null) {
-			// Check if the user is currently logged
-			// and show any cached content
-			updateViewsWithProfileInfo();
-		} else {
-			// If the user is not logged in, go to the
-			// activity showing the login view.
-			startLoginActivity();
-		}
+		updateViewsWithProfileInfo();
 	}
 
 	private void updateViewsWithProfileInfo() {
@@ -146,12 +153,12 @@ public class UserDetailsActivity extends Activity {
                 } else {
                     getActionBar().setTitle("error");
                 }
-				if (userProfile.getString("relationship_status") != null) {
+				/*if (userProfile.getString("relationship_status") != null) {
 					userRelationshipView.setText(userProfile
 							.getString("relationship_status"));
 				} else {
 					userRelationshipView.setText("Not specified");
-				}
+				}*/
                 if (userProfile.getString("location") != null) {
                     userLocationView.setText(userProfile.getString("location"));
                 } else {
