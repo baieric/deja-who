@@ -24,7 +24,7 @@ import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
 
-	private boolean testing = false; // set to true if you want app to consider yourself a passer-by for testing purposes
+	private static final boolean testing = true; // set to true if you want app to consider yourself a passer-by for testing purposes
 	
     private boolean isGPSEnabled = false;
     private boolean isNetworkEnabled = false;
@@ -34,7 +34,8 @@ public class GPSTracker extends Service implements LocationListener {
     private static final int MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     private static final int MIN_TIME_BW_UPDATES = 1000*60*1; //1 minute
     private static final double MAX_DISTANCE = 0.04; // max distance in kilometers for users to pass by each other
-    private static final int MINIMUM_HOURS = 6; // minimum hours before user can pass by the same user again
+    private static final int MINIMUM_HOURS = 1; // minimum hours before user can pass by the same user again
+    private static final int LOCATION_LAST_UPDATED = 15; // minimum minutes that user's last update must be to connect with others
 
     LocationManager manager;
 
@@ -83,8 +84,8 @@ public class GPSTracker extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location l) {
-    	if(l != null){
-	    	ParseUser currentUser = ParseUser.getCurrentUser();
+    	ParseUser currentUser = ParseUser.getCurrentUser();
+    	if(l != null && currentUser != null){
 	    	geoPoint = new ParseGeoPoint(l.getLatitude(), l.getLongitude());
 	    	currentUser.put("location", geoPoint);
 	    	Date date = new Date();
@@ -102,6 +103,12 @@ public class GPSTracker extends Service implements LocationListener {
     private void findNearbyUsers(){
     	ParseQuery<ParseUser> query = ParseUser.getQuery();
     	query.whereWithinKilometers("location", geoPoint, MAX_DISTANCE);
+    	
+    	Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, LOCATION_LAST_UPDATED * -1);
+		Date date = cal.getTime();
+		query.whereGreaterThanOrEqualTo("locationUpdatedAt", date);
+    	
     	query.findInBackground(new FindCallback<ParseUser>(){
 			@Override
 			public void done(List<ParseUser> objects, ParseException e) {
@@ -149,6 +156,7 @@ public class GPSTracker extends Service implements LocationListener {
 					}
 				}
 				object.increment("numEncounters");
+				object.put("unread", true);
 				Date date = new Date();
 				object.put("lastMetAt", date);
 				object.saveInBackground();

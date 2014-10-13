@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import android.R.color;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,9 +72,9 @@ public class RelationshipAdapter extends ArrayAdapter<Relationship> {
             int displayColor = talk.getRoom().getColor();
             talkLayout.setBackgroundColor(displayColor);
         }*/
-
+        
         ParseUser user = Relationship.getUser();
-        SimpleDateFormat df = new SimpleDateFormat("MMMM dd, yyyy h:mm a", Locale.US);
+        SimpleDateFormat df = new SimpleDateFormat("MMM d, yyyy h:mm a", Locale.US);
         TextView nameView = holder.nameView;
         TextView dateView = holder.dateView;
         TextView numEncountersView = holder.numEncountersView;

@@ -2,15 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"  >
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
+    android:background="#b9090b"  >
     
+    <ImageView 
+	   android:id="@+id/deja_logo"
+	   android:contentDescription="@string/logo_alt"
+	   android:src="@drawable/deja_logo"
+	   android:gravity="center"
+	   android:layout_width="wrap_content"
+	   android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_height="wrap_content"
+        android:scaleType="fitStart"
+        android:adjustViewBounds="true"
+	   />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="30dp"
         android:gravity="center"
         android:text="@string/login_intro"
-        android:textSize="18sp" />
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#fff" />
     
 
     
@@ -19,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:text="@string/login"
         android:textColor="#fff"
         android:layout_gravity="center_horizontal"

@@ -44,6 +44,10 @@ public class UserDetailsActivity extends Activity {
         if(getIntent().getStringExtra("parent").equals("RelationshipListActivity")) {
         	r = RelationshipListActivity.selected;
             friend = r.getUser();
+            if(r.getBoolean("unread")){
+            	r.put("unread", false);
+            	r.saveInBackground();
+            }
         }
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 
