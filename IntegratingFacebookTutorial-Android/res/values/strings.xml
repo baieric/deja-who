@@ -4,6 +4,7 @@
     <string name="app_name">Deja Who</string>
     <string name="app_id">275427359319898</string>
     <string name="action_settings">Settings</string>
+    <string name="last_passed">Last Passed On:</string>
     <string name="login">Log In</string>
     <string name="logout">Log Out</string>
     <string name="login_intro">Learn about the people you\'d otherwise pass by everyday.</string>

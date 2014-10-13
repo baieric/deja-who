@@ -8,7 +8,10 @@
         android:id="@+id/userProfilePicture"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         facebook:preset_size="normal" />
     <TextView
         android:id="@+id/name_view"
@@ -17,8 +20,9 @@
         android:fontFamily="sans-serif"
         android:textColor="@android:color/black"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="110dp"
         android:textSize="24sp"
+        android:layout_toRightOf="@+id/userProfilePicture"
         android:textStyle="bold"/>
 	<TextView
         android:id="@+id/numEncounters_view"
@@ -27,9 +31,22 @@
         android:fontFamily="sans-serif"
         android:textColor="@android:color/black"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="110dp"
         android:layout_below="@+id/name_view"
-        android:textSize="24sp" />
+        android:layout_toRightOf="@+id/userProfilePicture"
+        android:textSize="16sp" />
+	<TextView
+        android:id="@+id/lastPassed_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:textColor="@android:color/black"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/numEncounters_view"
+        android:layout_marginLeft="110dp"
+        android:text="@string/last_passed"
+        android:layout_toRightOf="@+id/userProfilePicture"
+        android:textSize="16sp" />
     <TextView
         android:id="@+id/date_view"
         android:layout_width="wrap_content"
@@ -37,8 +54,9 @@
         android:fontFamily="sans-serif"
         android:textColor="@android:color/black"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="5dp"
-        android:textSize="14sp" />
+        android:layout_below="@+id/lastPassed_view"
+        android:layout_marginLeft="110dp"
+        android:layout_toRightOf="@+id/userProfilePicture"
+        android:textSize="16sp" />
 
 </RelativeLayout>

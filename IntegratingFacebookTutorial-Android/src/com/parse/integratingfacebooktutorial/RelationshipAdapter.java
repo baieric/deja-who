@@ -78,12 +78,12 @@ public class RelationshipAdapter extends ArrayAdapter<Relationship> {
         TextView nameView = holder.nameView;
         TextView dateView = holder.dateView;
         TextView numEncountersView = holder.numEncountersView;
-        dateView.setText("Last Passed: " + df.format(Relationship.get("lastMetAt")));
+        dateView.setText(df.format(Relationship.get("lastMetAt")));
         int numEncounters = Relationship.getInt("numEncounters");
         if(numEncounters == 1){
-        	numEncountersView.setText("Passed 1 time");
+        	numEncountersView.setText("Passed by once");
         }else{
-        	numEncountersView.setText("Passed " + numEncounters + " times");
+        	numEncountersView.setText("Passed by " + numEncounters + " times");
         }
         
         ProfilePictureView pictureView = holder.userProfilePictureView;
