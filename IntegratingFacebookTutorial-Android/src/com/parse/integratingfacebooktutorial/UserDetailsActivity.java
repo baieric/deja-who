@@ -34,6 +34,7 @@ public class UserDetailsActivity extends Activity {
 	private TextView userRelationshipView;
 	private Button logoutButton;
     private ListView userLikes;
+    private static Relationship r;
     private static ParseUser friend;
 
 	@Override
@@ -41,7 +42,8 @@ public class UserDetailsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.userdetails);
         if(getIntent().getStringExtra("parent").equals("RelationshipListActivity")) {
-            friend = RelationshipListActivity.selectedUser;
+        	r = RelationshipListActivity.selected;
+            friend = r.getUser();
         }
 
 		userProfilePictureView = (ProfilePictureView) findViewById(R.id.userProfilePicture);

@@ -24,14 +24,17 @@ import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
 
+	private boolean testing = false; // set to true if you want app to consider yourself a passer-by for testing purposes
+	
     private boolean isGPSEnabled = false;
     private boolean isNetworkEnabled = false;
     private Location location;
     private ParseGeoPoint geoPoint;
-    private static final int MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+    
+    private static final int MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     private static final int MIN_TIME_BW_UPDATES = 1000*60*1; //1 minute
-    private static final double MAX_DISTANCE = 0.04; // kilometers (40 meters)
-    private static final int MINIMUM_MINUTES = 5; // minutes
+    private static final double MAX_DISTANCE = 0.04; // max distance in kilometers for users to pass by each other
+    private static final int MINIMUM_HOURS = 6; // minimum hours before user can pass by the same user again
 
     LocationManager manager;
 
@@ -96,7 +99,7 @@ public class GPSTracker extends Service implements LocationListener {
     	}
     }
     
-    public void findNearbyUsers(){
+    private void findNearbyUsers(){
     	ParseQuery<ParseUser> query = ParseUser.getQuery();
     	query.whereWithinKilometers("location", geoPoint, MAX_DISTANCE);
     	query.findInBackground(new FindCallback<ParseUser>(){
@@ -104,7 +107,7 @@ public class GPSTracker extends Service implements LocationListener {
 			public void done(List<ParseUser> objects, ParseException e) {
 				Log.d("GPSTracker", "Found " + objects.size() + " users nearby");
 				for(ParseUser user : objects){
-					if(user.getObjectId() != ParseUser.getCurrentUser().getObjectId()){
+					if(!user.hasSameId(ParseUser.getCurrentUser()) || testing){
 						processRelationship(user);
 					}
 				}
@@ -113,7 +116,7 @@ public class GPSTracker extends Service implements LocationListener {
     	});
     }
     
-    public void processRelationship(final ParseUser user){
+    private void processRelationship(final ParseUser user){
     	ParseQuery<Relationship> query1 = Relationship.createQuery();
         query1.whereEqualTo("user1", user);
         query1.whereEqualTo("user2", user);
@@ -139,7 +142,7 @@ public class GPSTracker extends Service implements LocationListener {
 					object.put("user2Interested", 0);
 				}else{
 					Calendar cal = Calendar.getInstance();
-					cal.add(Calendar.MINUTE, MINIMUM_MINUTES * -1);
+					cal.add(Calendar.HOUR, MINIMUM_HOURS * -1);
 					Date date = cal.getTime();
 					if(object.getDate("lastMetAt").after(date)){
 						return;
@@ -150,7 +153,6 @@ public class GPSTracker extends Service implements LocationListener {
 				object.put("lastMetAt", date);
 				object.saveInBackground();
 				Log.d("GPSTracker", "updated relationship");
-				// create encounter
 			}
         });
     }

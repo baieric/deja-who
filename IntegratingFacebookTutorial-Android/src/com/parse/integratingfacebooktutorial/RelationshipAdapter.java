@@ -48,6 +48,7 @@ public class RelationshipAdapter extends ArrayAdapter<Relationship> {
             holder = new ViewHolder();
             holder.nameView = (TextView) view.findViewById(R.id.name_view);
             holder.dateView = (TextView) view.findViewById(R.id.date_view);
+            holder.numEncountersView = (TextView) view.findViewById(R.id.numEncounters_view);
             holder.userProfilePictureView = (ProfilePictureView) view.findViewById(R.id.userProfilePicture);
             /*holder.titleView = (TextView) view.findViewById(R.id.title);
             holder.speakerName = (TextView) view
@@ -75,7 +76,15 @@ public class RelationshipAdapter extends ArrayAdapter<Relationship> {
         SimpleDateFormat df = new SimpleDateFormat("MMMM dd, yyyy h:mm a", Locale.US);
         TextView nameView = holder.nameView;
         TextView dateView = holder.dateView;
-        dateView.setText(df.format(Relationship.getCreatedAt()));
+        TextView numEncountersView = holder.numEncountersView;
+        dateView.setText("Last Passed: " + df.format(Relationship.get("lastMetAt")));
+        int numEncounters = Relationship.getInt("numEncounters");
+        if(numEncounters == 1){
+        	numEncountersView.setText("Passed 1 time");
+        }else{
+        	numEncountersView.setText("Passed " + numEncounters + " times");
+        }
+        
         ProfilePictureView pictureView = holder.userProfilePictureView;
 
         if (user.get("profile") != null) {
@@ -171,6 +180,7 @@ public class RelationshipAdapter extends ArrayAdapter<Relationship> {
         LinearLayout talkLayout;
         TextView nameView;
         TextView dateView;
+        TextView numEncountersView;
         ProfilePictureView userProfilePictureView;
         /*TextView titleView;
         TextView speakerName;

@@ -20,7 +20,7 @@ import java.util.List;
 public class RelationshipListActivity extends Activity {
 
     private RelationshipAdapter adapter;
-    public static ParseUser selectedUser;
+    public static Relationship selected;
 
     // private List<Relationship> Relationships = new ArrayList<Relationship>();
     @Override
@@ -66,7 +66,7 @@ public class RelationshipListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Relationship Relationship = adapter.getItem(position);
-                selectedUser = Relationship.getUser();
+                selected = Relationship;
                 showUserDetailsActivity();
             }
         });

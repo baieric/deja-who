@@ -57,7 +57,7 @@ public class Relationship extends ParseObject {
     /**
      * Creates a query for talks with all the includes
      */
-    private static ParseQuery<Relationship> createQuery() {
+    public static ParseQuery<Relationship> createQuery() {
         ParseQuery<Relationship> query = new ParseQuery<Relationship>(Relationship.class);
         query.setCachePolicy(CachePolicy.CACHE_THEN_NETWORK);
         return query;
@@ -89,7 +89,7 @@ public class Relationship extends ParseObject {
         queries.add(query2);
 
         ParseQuery<Relationship> mainQuery = ParseQuery.or(queries);
-        mainQuery.orderByDescending("createdAt");
+        mainQuery.orderByDescending("lastMetAt");
         mainQuery.include("user1");
         mainQuery.include("user2");
 
